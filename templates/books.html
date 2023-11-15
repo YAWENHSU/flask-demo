@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>目前書籍內容</h1>
+    <ul>
+        {%for id in books %}
+        <li>
+            <h2>{{id}} - {{books[id]["name"]}}</h2>
+            <p>價格 : <b>{{books[id]["price"]}}</b></p>
+            <p><img src="{{books[id]['image_url']}}"></p>
+        </li>
+        {% endfor %}
+    </ul>
+
+
+</body>
+
+</html>
