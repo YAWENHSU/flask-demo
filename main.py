@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from datetime import datetime
+import pandas as pd
 
 app = Flask(__name__)
 books = {1: "Python book", 2: "Java book", 3: "Flask book"}
@@ -58,6 +59,22 @@ def get_books(id):
     except Exception as e:
         print(e)
     return '<h1>書籍編號不正確</h1>'
+
+
+@app.route("/pm25")
+def get_pm25():
+    url = 'https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV'
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        df = pd.read_csv(url).dropna()
+        columns = df.columns.tolist()
+        values = df.values.tolist()
+        message = "取得資料成功!"
+    except Exception as e:
+        print(e)
+        message = "取得資料失敗，請稍後再試"
+
+    return render_template('pm25.html', **locals())
 
 
 if __name__ == '__main__':
