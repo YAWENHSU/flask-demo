@@ -1,5 +1,7 @@
 body {
     background-color: antiquewhite;
+    text-align: center;
+    font-size: 20px;
 }
 
 .title {
@@ -8,6 +10,25 @@ body {
     font-weight: bold;
     font-size: 48px;
     text-shadow: 6px;
+}
+
+.highest,
+.lowest {
+    display: inline-block;
+    width: 50px;
+    margin-bottom: 16px;
+    padding: 6px;
+    border-radius: 12px;
+}
+
+.highest {
+    background-color: red;
+    color: white;
+}
+
+.lowest {
+    background-color: blue;
+    color: white;
 }
 
 .update-time {

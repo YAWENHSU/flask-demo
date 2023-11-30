@@ -10,10 +10,19 @@
 </head>
 
 <body>
-    <div class="title">PM2.5資料</div>
+    <div class="title">PM2.5即時資料</div>
     <p class="update-time">更新時間:{{now}} <span>({{message}})</span></p>
 
-    <table border="1">
+    最高 : {{highest[0]}} <span class="highest">{{highest[1]}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    最低 : {{lowest[0]}} <span class="lowest">{{lowest[1]}}</span>
+
+    <form action="" method="POST">
+        <input type="submit" name="update" value="更新" style="font-size: 18px;">&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="sort" value="排序" style="font-size: 18px;">
+    </form>
+    <br>
+
+    <table border=" 1">
         <thead>
             <tr>
                 {% for column in columns %}
@@ -34,6 +43,13 @@
 
         </tbody>
     </table>
+    <script>
+        setTimeout(() => {
+            location.reload();
+        }, 3600000);
+
+
+    </script>
 </body>
 
 </html>
