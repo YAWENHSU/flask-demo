@@ -14,13 +14,18 @@
     <h1>PM2.5數據圖</h1>
     <div id="main" style="width: 600px;height:400px;"></div>
     <div id="six_counties" style="width: 600px;height:400px;"></div>
+    <div id="county" style="width: 600px;height:400px;"></div>
+
 
     <!--使用ajax進行資料取得後繪製-->
     <script>
         const chart1 = echarts.init(document.getElementById('main'));
         const chart2 = echarts.init(document.getElementById('six_counties'));
+        const chart3 = echarts.init(document.getElementById('county'));
 
         drawPM25();
+
+
 
         function chartPic(chart, title, label, xData, yData, color = "#00008b") {
             let option = {
@@ -48,6 +53,29 @@
             chart.setOption(option);
 
         }
+
+        function drawCountyPM25(county) {
+            //ajax
+            $.ajax(
+                {
+                    url: "/county-pm25-json/" + county,
+                    type: "GET",
+                    dataType: "json",
+                    success: (result) => {
+                        if (!result["success"]) { county = county + " 輸入不正確..."; }
+                        console.log(result);
+                        chartPic(chart3, county, "PM2.5",
+                            Object.keys(result['pm25']),
+                            Object.values(result['pm25']),)
+
+                    },
+                    error: () => {
+                        alert("取得資料失敗!");
+                    }
+                }
+            )
+        }
+
 
         // function echartSixPm25(result) {
         //     let option = {
@@ -118,6 +146,7 @@
                             Object.keys(result["sixData"]),
                             Object.values(result["sixData"]), "#ff69b4");
 
+                        drawCountyPM25("臺北市");
 
                         //echartSixPm25(result["sixData"]);
                     },
