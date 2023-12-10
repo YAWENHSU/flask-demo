@@ -6,7 +6,10 @@ import json
 app = Flask(__name__)
 books = {1: "Python book", 2: "Java book", 3: "Flask book"}
 ascending = True
+url = 'https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV'
 df = None
+counties = None
+
 
 # 首頁
 
@@ -70,13 +73,19 @@ def get_now():
 
 @app.route("/pm25-chart")
 def pm25_chart():
-    return render_template('pm25-chart.html')
+    global counties
+    df = pd.read_csv(url).dropna()
+    counties = list(set(df["county"]))
+
+    lowest = df.sort_values('pm25').iloc[0][['site', 'pm25']].values
+    highest = df.sort_values('pm25').iloc[-1][['site', 'pm25']].values
+
+    return render_template('pm25-chart.html', counties=counties, highest=highest, lowest=lowest)
 
 
 @app.route("/county-pm25-json/<county>")
 def get_county_pm25_json(county):
     global df
-    url = 'https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV'
     pm25 = {}
     try:
         if df is None:
@@ -91,17 +100,21 @@ def get_county_pm25_json(county):
         message = str(e)
         success = False
 
-    json_data = {"datetime": get_now(), "success": success, "title": county,
-                 "pm25": pm25, "message": message}
+    json_data = {"datetime": get_now(),
+                 "success": success,
+                 "title": county,
+                 "pm25": pm25,
+                 "message": message,
+                 }
     return json.dumps(json_data, ensure_ascii=False)
 
 
 @app.route("/pm25-json")
 def get_pm25_json():
-    global df
+    global df, counties
     six_counties = ['新北市', '臺北市', '桃園市', '臺中市', '臺南市', '高雄市']
-    url = 'https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV'
-    df = pd.read_csv(url).dropna()
+    if df is None:
+        df = pd.read_csv(url).dropna()
 
     six_data = {}
     for county in six_counties:
@@ -113,6 +126,7 @@ def get_pm25_json():
         "xData": df["site"].tolist(),
         "yData": df["pm25"].tolist(),
         "sixData": six_data,
+        "county": counties[0],
 
     }
     return json.dumps(json_data, ensure_ascii=False)
