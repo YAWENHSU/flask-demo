@@ -80,7 +80,7 @@ def pm25_chart():
     lowest = df.sort_values('pm25').iloc[0][['site', 'pm25']].values
     highest = df.sort_values('pm25').iloc[-1][['site', 'pm25']].values
 
-    return render_template('pm25-chart.html', counties=counties, highest=highest, lowest=lowest)
+    return render_template('pm25-charts-bulma.html', counties=counties, highest=highest, lowest=lowest, datetime=get_now())
 
 
 @app.route("/county-pm25-json/<county>")

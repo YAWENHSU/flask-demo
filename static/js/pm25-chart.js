@@ -9,6 +9,12 @@ selectCountyEl.addEventListener("change", () => {
     drawCountyPM25(selectCountyEl.value);
 });
 
+window.onresize = function () {
+    chart1.resize();
+    chart2.resize();
+    chart3.resize();
+};
+
 
 //繪製圖形
 drawPM25();
@@ -44,12 +50,14 @@ function chartPic(chart, title, label, xData, yData, color = "#00008b") {
 
 function drawCountyPM25(county) {
     //ajax
+    chart3.showLoading();
     $.ajax(
         {
             url: "/county-pm25-json/" + county,
             type: "GET",
             dataType: "json",
             success: (result) => {
+                chart3.hideLoading();
                 if (!result["success"]) { county = county + " 輸入不正確..."; }
                 console.log(result);
                 chartPic(chart3, county, "PM2.5",
@@ -58,6 +66,7 @@ function drawCountyPM25(county) {
 
             },
             error: () => {
+                chart3.hideLoading();
                 alert("取得資料失敗!");
             }
         }
@@ -119,12 +128,16 @@ function drawCountyPM25(county) {
 
 function drawPM25() {
     //ajax
+    chart1.showLoading();
+    chart2.showLoading();
     $.ajax(
         {
             url: "/pm25-json",
             type: "GET",
             dataType: "json",
             success: (result) => {
+                chart1.hideLoading();
+                chart2.hideLoading();
                 console.log(result);
                 chartPic(chart1, result['title'], "PM2.5",
                     (result['xData']),
@@ -139,6 +152,8 @@ function drawPM25() {
                 //echartSixPm25(result["sixData"]);
             },
             error: () => {
+                chart1.hideLoading();
+                chart2.hideLoading();
                 alert("取得資料失敗!");
             }
         }
